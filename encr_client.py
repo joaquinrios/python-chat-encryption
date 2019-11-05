@@ -1,4 +1,4 @@
-# Encoding: UTF-8
+#Encoding: UTF-8
 """
 
 """
@@ -57,14 +57,8 @@ def encrypt(message, key):
     fKey = formatKeyToMessage(fKey, len(binMessage))
     encrypted = ""
     for i in range(len(binMessage)):
-        if binMessage[i] == "1" and fKey[i] == "1":
-            encrypted += "0"
-        elif binMessage[i] == "1" and fKey[i] == "0":
-            encrypted += "1"
-        elif binMessage[i] == "0" and fKey[i] == "0":
-            encrypted += "0"
-        elif binMessage[i] == "0" and fKey[i] == "1":
-            encrypted += "1"
+        encrypted += str((int(binMessage[i])+int(fKey[i]))%2)
+
     return encrypted
 
 
@@ -79,14 +73,8 @@ def decrypt(binMessage, key):
     decrypted = ""
     message = ""
     for i in range(len(binMessage)):
-        if   binMessage[i] == "1" and fKey[i] == "1":
-            decrypted += "0"
-        elif binMessage[i] == "1" and fKey[i] == "0":
-            decrypted += "1"
-        elif binMessage[i] == "0" and fKey[i] == "0":
-            decrypted +="0"
-        elif binMessage[i] == "0" and fKey[i] == "1":
-            decrypted +="1"
+        decrypted += str((int(binMessage[i])+int(fKey[i]))%2)
+
     decrypted = binaryToString(decrypted)
     for c in decrypted:
         message += chr(c)
@@ -96,11 +84,9 @@ def decrypt(binMessage, key):
 # ---
 
 server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-if len(sys.argv) != 3:
-    print "Correct usage: script, IP address, port number"
-    exit()
-IP_address = str(sys.argv[1])
-Port = int(sys.argv[2])
+
+IP_address = "localhost"
+Port = 5001
 server.connect((IP_address, Port))
 
 while True:
@@ -110,7 +96,10 @@ while True:
 
         # receive message
         if socks == server:
-            message = socks.recv(2048)
+            message = socks.recv(100) #len of line
+
+            message = decrypt(message, "secret")
+
             print message
 
         # send message
@@ -119,6 +108,10 @@ while True:
 
             # encrypt the message
             secretMessage = encrypt(message, "secret")
+
+            #Este decrypt si funciona
+            #secretMessage = decrypt(secretMessage, "secret")
+
 
             server.send(secretMessage)
             sys.stdout.write("<You>")
