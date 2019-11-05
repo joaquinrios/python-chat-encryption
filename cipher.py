@@ -29,7 +29,7 @@ def formatKeyToMessage(key, messageLength):
     # Adapts key so it's always the same length as the message
     times = messageLength // len(key)
     fKey = ""
-    for i in range(times):
+    for i in xrange(times):
         fKey += key
     if messageLength % len(key) != 0:
         fKey +=  key[:messageLength % len(key):]
@@ -45,7 +45,7 @@ def encrypt(message, key):
     fKey = stringToBinary(key)
     fKey = formatKeyToMessage(fKey, len(binMessage))
     encrypted = ""
-    for i in range(len(binMessage)):
+    for i in xrange(len(binMessage)):
         if   binMessage[i] == "1" and fKey[i] == "1":
             encrypted += "0"
         elif binMessage[i] == "1" and fKey[i] == "0":
@@ -66,7 +66,7 @@ def decrypt(binMessage, key):
     fKey = formatKeyToMessage(fKey, len(binMessage))
     decrypted = ""
     message = ""
-    for i in range(len(binMessage)):
+    for i in xrange(len(binMessage)):
         if   binMessage[i] == "1" and fKey[i] == "1":
             decrypted += "0"
         elif binMessage[i] == "1" and fKey[i] == "0":
@@ -83,9 +83,10 @@ def decrypt(binMessage, key):
 # EXAMPLE
 e = encrypt("Hello World", "secret")
 
-print(e)
+print "Encrypted Text: "
+print e
 
 
 d = decrypt(e, "secret")
-
-print(d)
+print "Decrypted Text: "
+print d
